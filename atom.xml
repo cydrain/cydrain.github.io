@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://cydrain.github.io/"/>
-  <updated>2017-12-09T06:06:54.000Z</updated>
+  <updated>2017-12-09T10:43:24.000Z</updated>
   <id>http://cydrain.github.io/</id>
   
   <author>
@@ -17,25 +17,27 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>test</title>
+    <title>github.io 更新与备份</title>
     <link href="http://cydrain.github.io/2017/12/09/test/"/>
     <id>http://cydrain.github.io/2017/12/09/test/</id>
     <published>2017-12-09T06:06:13.000Z</published>
-    <updated>2017-12-09T06:06:54.000Z</updated>
+    <updated>2017-12-09T10:43:24.000Z</updated>
     
-    <content type="html"><![CDATA[<h1 id="This-is-a-test"><a href="#This-is-a-test" class="headerlink" title="This is a test!"></a>This is a test!</h1>]]></content>
+    <content type="html"><![CDATA[<p>#完整操作如下：（摘自知乎回答）</p><ol><li>创建仓库 cydrain.github.io;</li><li>创建两个分支：master 与 hexo;<br>git branch hexo</li><li>设置hexo为默认分支（因为我们只需要手动管理这个分支上的Hexo网站文件）;</li><li>使用 git clone git@github.com:cydrain/cydrain.github.io.git 拷贝仓库;</li><li>在本地 cydrain.github.io 文件夹下通过Git bash依次执行<br>npm install hexo<br>hexo init<br>npm install<br>npm install hexo-deployer-git（此时当前分支应显示为hexo）;</li><li>修改 _config.yml 中的 deploy 参数，分支应为master；</li><li>依次执行<br>git add .<br>git commit -m “…”<br>git push origin hexo 提交网站相关的文件；</li><li>执行 hexo generate -d 生成网站并部署到 GitHub 上。</li></ol><p>#本地资料丢失</p><p>当重装电脑之后，或者想在其他电脑上修改博客，可以使用下列步骤：<br>使用 git clone git@github.com:cydrain/cydrain.github.io.git 拷贝仓库（默认分支为hexo）;<br>在本地新拷贝的 cydrain.github.io 文件夹下通过 Git bash 依次执行下列指令：<br>    npm install hexo<br>    npm install<br>    npm install hexo-deployer-git（记得，不需要hexo init这条指令）。</p>]]></content>
     
     <summary type="html">
     
       
       
-        &lt;h1 id=&quot;This-is-a-test&quot;&gt;&lt;a href=&quot;#This-is-a-test&quot; class=&quot;headerlink&quot; title=&quot;This is a test!&quot;&gt;&lt;/a&gt;This is a test!&lt;/h1&gt;
+        &lt;p&gt;#完整操作如下：（摘自知乎回答）&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;创建仓库 cydrain.github.io;&lt;/li&gt;
+&lt;li&gt;创建两个分支：master 与 hexo;&lt;br&gt;git branch hexo&lt;/li&gt;
+&lt;li&gt;设置hexo为默认分支（因为我们只需要手动管理这
       
     
     </summary>
     
-    
-      <category term="C++" scheme="http://cydrain.github.io/tags/C/"/>
     
   </entry>
   

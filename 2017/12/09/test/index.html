@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="C++," />
+  <meta name="keywords" content="Hexo, NexT" />
 
 
 
@@ -83,18 +83,17 @@
 
 
 
-<meta name="description" content="This is a test!">
-<meta name="keywords" content="C++">
+<meta name="description" content="#完整操作如下：（摘自知乎回答）  创建仓库 cydrain.github.io; 创建两个分支：master 与 hexo;git branch hexo 设置hexo为默认分支（因为我们只需要手动管理这个分支上的Hexo网站文件）; 使用 git clone git@github.com:cydrain/cydrain.github.io.git 拷贝仓库; 在本地 cydrain.githu">
 <meta property="og:type" content="article">
-<meta property="og:title" content="test">
+<meta property="og:title" content="github.io 更新与备份">
 <meta property="og:url" content="http://cydrain.github.io/2017/12/09/test/index.html">
 <meta property="og:site_name" content="CYDRAIN 的博客">
-<meta property="og:description" content="This is a test!">
+<meta property="og:description" content="#完整操作如下：（摘自知乎回答）  创建仓库 cydrain.github.io; 创建两个分支：master 与 hexo;git branch hexo 设置hexo为默认分支（因为我们只需要手动管理这个分支上的Hexo网站文件）; 使用 git clone git@github.com:cydrain/cydrain.github.io.git 拷贝仓库; 在本地 cydrain.githu">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-12-09T06:06:54.000Z">
+<meta property="og:updated_time" content="2017-12-09T10:43:24.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="test">
-<meta name="twitter:description" content="This is a test!">
+<meta name="twitter:title" content="github.io 更新与备份">
+<meta name="twitter:description" content="#完整操作如下：（摘自知乎回答）  创建仓库 cydrain.github.io; 创建两个分支：master 与 hexo;git branch hexo 设置hexo为默认分支（因为我们只需要手动管理这个分支上的Hexo网站文件）; 使用 git clone git@github.com:cydrain/cydrain.github.io.git 拷贝仓库; 在本地 cydrain.githu">
 
 
 
@@ -130,7 +129,7 @@
 
 
 
-  <title>test | CYDRAIN 的博客</title>
+  <title>github.io 更新与备份 | CYDRAIN 的博客</title>
   
 
 
@@ -284,7 +283,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">test</h1>
+          <h1 class="post-title" itemprop="name headline">github.io 更新与备份</h1>
         
 
         <div class="post-meta">
@@ -334,7 +333,20 @@
       
 
       
-        <h1 id="This-is-a-test"><a href="#This-is-a-test" class="headerlink" title="This is a test!"></a>This is a test!</h1>
+        <p>#完整操作如下：（摘自知乎回答）</p>
+<ol>
+<li>创建仓库 cydrain.github.io;</li>
+<li>创建两个分支：master 与 hexo;<br>git branch hexo</li>
+<li>设置hexo为默认分支（因为我们只需要手动管理这个分支上的Hexo网站文件）;</li>
+<li>使用 git clone git@github.com:cydrain/cydrain.github.io.git 拷贝仓库;</li>
+<li>在本地 cydrain.github.io 文件夹下通过Git bash依次执行<br>npm install hexo<br>hexo init<br>npm install<br>npm install hexo-deployer-git（此时当前分支应显示为hexo）;</li>
+<li>修改 _config.yml 中的 deploy 参数，分支应为master；</li>
+<li>依次执行<br>git add .<br>git commit -m “…”<br>git push origin hexo 提交网站相关的文件；</li>
+<li>执行 hexo generate -d 生成网站并部署到 GitHub 上。</li>
+</ol>
+<p>#本地资料丢失</p>
+<p>当重装电脑之后，或者想在其他电脑上修改博客，可以使用下列步骤：<br>使用 git clone git@github.com:cydrain/cydrain.github.io.git 拷贝仓库（默认分支为hexo）;<br>在本地新拷贝的 cydrain.github.io 文件夹下通过 Git bash 依次执行下列指令：<br>    npm install hexo<br>    npm install<br>    npm install hexo-deployer-git（记得，不需要hexo init这条指令）。</p>
+
       
     </div>
     
@@ -348,12 +360,6 @@
     
 
     <footer class="post-footer">
-      
-        <div class="post-tags">
-          
-            <a href="/tags/C/" rel="tag"># C++</a>
-          
-        </div>
       
 
       
@@ -424,17 +430,8 @@
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            站点概览
-          </li>
-        </ul>
-      
 
-      <section class="site-overview-wrap sidebar-panel">
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -512,22 +509,6 @@
         </div>
       </section>
 
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#This-is-a-test"><span class="nav-number">1.</span> <span class="nav-text"><a href="#This-is-a-test" class="headerlink" title="This is a test!"></a>This is a test!</span></a></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
       
 
       
