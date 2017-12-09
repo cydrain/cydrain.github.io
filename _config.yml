@@ -91,6 +91,17 @@ deploy:
   type: git
   repo: git@github.com:cydrain/cydrain.github.io.git
   branch: master
-  
+
+# Avatar
 avatar: /uploads/avatar.png
+
+# Markdown
+markdown:
+  gfm: true
+  pedantic: false
+  sanitize: false
+  tables: true
+  breaks: true
+  smartLists: true
+  smartypants: true
 
