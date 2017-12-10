@@ -2,6 +2,7 @@
 title: github.io 更新与备份
 date: 2017-12-09 14:06:13
 tags:
+categories: Github
 ---
 
 # 完整操作如下：（摘自知乎回答）
