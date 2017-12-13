@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="CYDRAIN 的博客" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="AVL-Tree 即平衡二叉搜索树，理解的难点就是如何对结点进行旋转以保持二叉树的平衡。 AVL-Tree 的结点定义如下：1234567struct AVL_Node &amp;#123;    int val;    int height;    AVL_Node *left;    AVL_Node *right;    AVL_Node(int x) : val(x), height(0), le">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AVL-Tree详解">
+<meta property="og:url" content="http://cydrain.github.io/2017/12/13/AVL-Tree详解/index.html">
+<meta property="og:site_name" content="CYDRAIN 的博客">
+<meta property="og:description" content="AVL-Tree 即平衡二叉搜索树，理解的难点就是如何对结点进行旋转以保持二叉树的平衡。 AVL-Tree 的结点定义如下：1234567struct AVL_Node &amp;#123;    int val;    int height;    AVL_Node *left;    AVL_Node *right;    AVL_Node(int x) : val(x), height(0), le">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-12-13T12:55:45.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="AVL-Tree详解">
+<meta name="twitter:description" content="AVL-Tree 即平衡二叉搜索树，理解的难点就是如何对结点进行旋转以保持二叉树的平衡。 AVL-Tree 的结点定义如下：1234567struct AVL_Node &amp;#123;    int val;    int height;    AVL_Node *left;    AVL_Node *right;    AVL_Node(int x) : val(x), height(0), le">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://cydrain.github.io/2017/12/13/AVL-Tree详解/"/>
+
+
+
+
+
+  <title>AVL-Tree详解 | CYDRAIN 的博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">CYDRAIN 的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">by Darren Cai</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://cydrain.github.io/2017/12/13/AVL-Tree详解/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Darren Cai">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CYDRAIN 的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">AVL-Tree详解</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-13T20:41:42+08:00">
+                2017-12-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Tree/" itemprop="url" rel="index">
+                    <span itemprop="name">Tree</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>AVL-Tree 即平衡二叉搜索树，理解的难点就是如何对结点进行旋转以保持二叉树的平衡。</p>
+<p>AVL-Tree 的结点定义如下：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">AVL_Node</span> &#123;</span></span><br><span class="line">    <span class="keyword">int</span> val;</span><br><span class="line">    <span class="keyword">int</span> height;</span><br><span class="line">    AVL_Node *left;</span><br><span class="line">    AVL_Node *right;</span><br><span class="line">    AVL_Node(<span class="keyword">int</span> x) : val(x), height(<span class="number">0</span>), left(<span class="literal">NULL</span>), right(<span class="literal">NULL</span>) &#123;&#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p><code>height</code>记录了该结点的高度，空结点高度为-1，叶子结点高度为0。</p>
+<p>AVL-Tree 的旋转只有4种情况：左左、右右、左右、右左。<br>左左、右右的情况比较好理解，见下图及代码所示。<br><code>node</code>为失衡的结点，<code>top</code>为旋转后的根结点。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *</span></span><br><span class="line"><span class="comment"> *                                                             *</span></span><br><span class="line"><span class="comment"> *          3                                                  *</span></span><br><span class="line"><span class="comment"> *         /       (LL)         2                              *</span></span><br><span class="line"><span class="comment"> *        2       ======&gt;      / \                             *</span></span><br><span class="line"><span class="comment"> *       /                    1   3                            *</span></span><br><span class="line"><span class="comment"> *      1                                                      *</span></span><br><span class="line"><span class="comment"> *                                                             *</span></span><br><span class="line"><span class="comment"> * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */</span></span><br><span class="line"><span class="function">AVL_Node* <span class="title">rotateLL</span><span class="params">(AVL_Node* node)</span> </span>&#123;</span><br><span class="line">    AVL_Node* top = node-&gt;left;</span><br><span class="line">    node-&gt;left = top-&gt;right;</span><br><span class="line">    top-&gt;right = node;</span><br><span class="line">    node-&gt;height = max(getHeight(node-&gt;left), getHeight(node-&gt;right)) + <span class="number">1</span>;</span><br><span class="line">    top-&gt;height = max(getHeight(top-&gt;left), getHeight(top-&gt;right)) + <span class="number">1</span>;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">"Rotate LL for node "</span> &lt;&lt; node-&gt;val &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    <span class="keyword">return</span> top;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *</span></span><br><span class="line"><span class="comment"> *                                                             *</span></span><br><span class="line"><span class="comment"> *      1                                                      *</span></span><br><span class="line"><span class="comment"> *       \          (RR)         2                             *</span></span><br><span class="line"><span class="comment"> *        2        ======&gt;      / \                            *</span></span><br><span class="line"><span class="comment"> *         \                   1   3                           *</span></span><br><span class="line"><span class="comment"> *          3                                                  *</span></span><br><span class="line"><span class="comment"> *                                                             *</span></span><br><span class="line"><span class="comment"> * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */</span></span><br><span class="line"><span class="function">AVL_Node* <span class="title">rotateRR</span><span class="params">(AVL_Node* node)</span> </span>&#123;</span><br><span class="line">    AVL_Node* top = node-&gt;right;</span><br><span class="line">    node-&gt;right = top-&gt;left;</span><br><span class="line">    top-&gt;left = node;</span><br><span class="line">    node-&gt;height = max(getHeight(node-&gt;left), getHeight(node-&gt;right)) + <span class="number">1</span>;</span><br><span class="line">    top-&gt;height = max(getHeight(top-&gt;left), getHeight(top-&gt;right)) + <span class="number">1</span>;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">"Rotate RR for node "</span> &lt;&lt; node-&gt;val &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    <span class="keyword">return</span> top;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>左右的情况可以通过一次右右旋转，转换为左左。<br>同样，右左的情况可以通过一次左左旋转，转换为右右。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *</span></span><br><span class="line"><span class="comment"> *                                                             *</span></span><br><span class="line"><span class="comment"> *        3                     3                              *</span></span><br><span class="line"><span class="comment"> *       /        (RR)         /        (LL)          2        *</span></span><br><span class="line"><span class="comment"> *      1        ======&gt;      2        ======&gt;       / \       *</span></span><br><span class="line"><span class="comment"> *       \                   /                      1   3      *</span></span><br><span class="line"><span class="comment"> *        2                 1                                  *</span></span><br><span class="line"><span class="comment"> *                                                             *</span></span><br><span class="line"><span class="comment"> * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */</span></span><br><span class="line"><span class="function">AVL_Node* <span class="title">rotateLR</span><span class="params">(AVL_Node* node)</span> </span>&#123;</span><br><span class="line">    node-&gt;left = rotateRR(node-&gt;left);</span><br><span class="line">    <span class="keyword">return</span> rotateLL(node);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *</span></span><br><span class="line"><span class="comment"> *                                                             *</span></span><br><span class="line"><span class="comment"> *      1                    1                                 *</span></span><br><span class="line"><span class="comment"> *       \         (LL)       \         (RR)          2        *</span></span><br><span class="line"><span class="comment"> *        3       ======&gt;      2       ======&gt;       / \       *</span></span><br><span class="line"><span class="comment"> *       /                      \                   1   3      *</span></span><br><span class="line"><span class="comment"> *      2                        3                             *</span></span><br><span class="line"><span class="comment"> *                                                             *</span></span><br><span class="line"><span class="comment"> * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */</span></span><br><span class="line"><span class="function">AVL_Node* <span class="title">rotateRL</span><span class="params">(AVL_Node* node)</span> </span>&#123;</span><br><span class="line">    node-&gt;right = rotateLL(node-&gt;right);</span><br><span class="line">    <span class="keyword">return</span> rotateRR(node);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>添加结点的时候，如果添加到左子树并发生失衡，那么一定是左子树高度比右子树高。<br>如果添加到右子树并发生失衡，那么一定是右子树高度比左子树高。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">AVL_Node* <span class="title">addNode</span><span class="params">(AVL_Node* root, <span class="keyword">int</span> v)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (root == <span class="literal">NULL</span>) &#123;</span><br><span class="line">        root = <span class="keyword">new</span> AVL_Node(v);</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; <span class="string">"Add node "</span> &lt;&lt; root-&gt;val &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (v &lt; root-&gt;val) &#123;</span><br><span class="line">            root-&gt;left = addNode(root-&gt;left, v);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (getHeight(root-&gt;left) - getHeight(root-&gt;right) == <span class="number">2</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (v &lt; root-&gt;left-&gt;val) &#123;</span><br><span class="line">                    root = rotateLL(root);</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    root = rotateLR(root);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (v &gt; root-&gt;val) &#123;</span><br><span class="line">            root-&gt;right = addNode(root-&gt;right, v);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (getHeight(root-&gt;right) - getHeight(root-&gt;left) == <span class="number">2</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (v &gt; root-&gt;right-&gt;val) &#123;</span><br><span class="line">                    root = rotateRR(root);</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    root = rotateRL(root);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="built_in">cout</span> &lt;&lt; <span class="string">"Node with value "</span> &lt;&lt; v &lt;&lt; <span class="string">" already exist!"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        root-&gt;height = max(getHeight(root-&gt;left), getHeight(root-&gt;right)) + <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> root;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>删除结点的时候，如果从左子树删除并发生失衡，那么一定是右子树的高度高于左子树；<br>如果从右子树删除并发生失衡，那么一定是左子树的高度高于右子树。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">AVL_Node* <span class="title">delNode</span><span class="params">(AVL_Node* root, <span class="keyword">int</span> v)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (root == <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; <span class="string">"Node with value "</span> &lt;&lt; v &lt;&lt; <span class="string">" NOT exist!"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (v &lt; root-&gt;val) &#123;</span><br><span class="line">        root-&gt;left = delNode(root-&gt;left, v);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// height(right) &gt; height(left)</span></span><br><span class="line">        <span class="keyword">if</span> (getHeight(root-&gt;right) - getHeight(root-&gt;left) == <span class="number">2</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (root-&gt;right-&gt;right) &#123;</span><br><span class="line">                root = rotateRR(root);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                root = rotateRL(root);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (v &gt; root-&gt;val) &#123;</span><br><span class="line">        root-&gt;right = delNode(root-&gt;right, v);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// height(left) &gt; height(right)</span></span><br><span class="line">        <span class="keyword">if</span> (getHeight(root-&gt;left) - getHeight(root-&gt;right) == <span class="number">2</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (root-&gt;left-&gt;left) &#123;</span><br><span class="line">                root = rotateLL(root);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                root = rotateLR(root);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; <span class="string">"Del node "</span> &lt;&lt; v &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">        <span class="keyword">if</span> (root-&gt;left &amp;&amp; root-&gt;right) &#123;</span><br><span class="line">            root-&gt;val = findMin(root-&gt;right);</span><br><span class="line">            root-&gt;right = delNode(root-&gt;right, root-&gt;val);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            root = (root-&gt;left ? root-&gt;left : root-&gt;right);</span><br><span class="line">            <span class="keyword">if</span> (root == <span class="literal">NULL</span>) <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    root-&gt;height = max(getHeight(root-&gt;left), getHeight(root-&gt;right)) + <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">return</span> root;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>完整代码请参考: [<a href="https://github.com/cydrain/Coding_Practice/blob/master/myCode/AVL-Tree/AVL-Tree/main.cpp" target="_blank" rel="noopener">https://github.com/cydrain/Coding_Practice/blob/master/myCode/AVL-Tree/AVL-Tree/main.cpp</a>]</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/10/Malloc-Page/" rel="next" title="Malloc Page">
+                <i class="fa fa-chevron-left"></i> Malloc Page
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/uploads/avatar.png"
+                alt="Darren Cai" />
+            
+              <p class="site-author-name" itemprop="name">Darren Cai</p>
+              <p class="site-description motion-element" itemprop="description">若干年后，你会感激今天的你付出的所有努力。</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/cydrain" target="_blank" title="GitHub">
+                    
+                      <i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:cydrain@126.com" target="_blank" title="E-Mail">
+                    
+                      <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Darren Cai</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
