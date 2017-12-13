@@ -7,23 +7,10 @@ categories: Memory
 
 Malloc 一个单独的内存页。
 
-实现：
-申请两个内存页的空间，一定包含一个完整的单独内存页。
-申请到地址为原始地址`org_ptr`，
-对原始地址的低地址位清零，得到单独的内存页地址`page_ptr`，
+malloc 的时候，申请两个内存页的空间，一定包含一个完整的单独内存页。
+申请到地址为原始地址`org_ptr`，对原始地址的低地址位清零，得到单独的内存页地址`page_ptr`，
 原始地址需要保存在`page_ptr - 1`的地址上。
-
-
-```
-#include <stdio.h>
-#include <string.h>
-#include <malloc.h>
-
-typedef unsigned long ulong;
-
-#define PAGE_SIZE 1024
-#define PAGE_MASK (~((ulong)0) << 10)
-
+```c
 void* mallocPage(void)
 {
     void *org_ptr = NULL, *page_ptr = NULL;
@@ -43,7 +30,10 @@ void* mallocPage(void)
     
     return page_ptr;
 }
+```
 
+free 的时候，通过`page_ptr - 1`得到原始的内存地址，再 free 。
+```c
 void freePage(void* ptr)
 {
     void *org_ptr = NULL;
@@ -58,17 +48,7 @@ void freePage(void* ptr)
 
     free(org_ptr);
 }
-
-int main(void)
-{
-    int i;
-    void* ptr[5];
-    for (i = 0; i < 5; i++) {
-        ptr[i] = mallocPage();
-    }
-    for (i = 0; i < 5; i++) {
-        freePage(ptr[i]);
-    }
-    return 0;
-}
 ```
+
+完整代码请参考: [https://github.com/cydrain/Coding_Practice/blob/master/myCode/mallocPage/mallocPage2.c]
+
